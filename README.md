@@ -2,7 +2,7 @@
 
 ## Overview
 
-End-to-end SQL analytics project on a 3,000-employee synthetic HR dataset.  
+End-to-end SQL analytics project on a 3,000-employee HR dataset.  
 Since the raw dataset contained no salary column, a **Python enrichment pipeline**
 was built first to engineer monthly salaries from Pay Zones using a
 performance-weighted random assignment model. The enriched dataset was then
@@ -26,7 +26,7 @@ flowchart TD
         B2["Column Standardisation<br/>snake_case rename · strip whitespace"]
         B3["Date Parsing<br/>start_date · exit_date · dob<br/>format='mixed' for mixed formats"]
         B4["Feature Engineering<br/>tenure_months = (end_date − start_date) ÷ 30<br/>tenure_years = tenure_months ÷ 12<br/>age = (2024-01-01 − dob) ÷ 365"]
-        B5["Salary Assignment<br/>Pay Zone → Salary Range<br/>Performance Modifier ± 10% noise<br/>Zone A: $30K–55K  Zone B: $55K–90K<br/>Zone C: $90K–140K"]
+        B5["Salary Assignment<br/>Pay Zone → Salary Range<br/>Performance Modifier ± 10% noise<br/>Zone A: ₹30K–55K  Zone B: ₹55K–90K<br/>Zone C: ₹90K–140K"]
         B6["Derived Flags<br/>is_terminated: 1 if 'terminated' in status<br/>performance_score_num: Exceeds=4 · Fully Meets=3<br/>Needs Improvement=1 · PIP=1"]
         B7["PostgreSQL Load<br/>SQLAlchemy · explicit dtype map<br/>chunksize=500 · method='multi'"]
     end
@@ -87,7 +87,7 @@ flowchart TD
 | **NumPy** | Random salary assignment with controlled seed |
 | **SQLAlchemy + psycopg2** | PostgreSQL connection + dtype-controlled table creation |
 | **PostgreSQL** | All business SQL analysis |
-| **DBeaver** | SQL client for query execution |
+| **pgadmin** | SQL client for query execution |
 
 ---
 
@@ -95,7 +95,7 @@ flowchart TD
 
 | Detail | Info |
 |---|---|
-| Source | Synthetic Employee Records Dataset — Kaggle |
+| Source | https://www.kaggle.com/datasets/ravindrasinghrana/employeedataset |
 | File | `employee_data.csv` |
 | Raw rows | 3,000 employees |
 | Raw columns | 26 |
@@ -116,9 +116,9 @@ flowchart TD
 
 | Pay Zone | Headcount | Min Salary | Avg Salary | Max Salary |
 |---|---|---|---|---|
-| Zone A | 1,062 | $33,850 | $42,954 | $51,250 |
-| Zone B | 985 | $60,400 | $73,014 | $84,700 |
-| Zone C | 953 | $97,850 | $115,741 | $132,250 |
+| Zone A | 1,062 | ₹33,850 | ₹42,954 | ₹51,250 |
+| Zone B | 985 | ₹60,400 | ₹73,014 | ₹84,700 |
+| Zone C | 953 | ₹97,850 | ₹115,741 | ₹132,250 |
 
 ### Performance Distribution
 
@@ -136,15 +136,15 @@ flowchart TD
 ### Salary Assignment Model
 
 ```
-Zone A → $30,000 – $55,000
-Zone B → $55,000 – $90,000
-Zone C → $90,000 – $140,000
+Zone A → ₹30,000 – ₹55,000
+Zone B → ₹55,000 – ₹90,000
+Zone C → ₹90,000 – ₹140,000
 
 Performance modifier on top of zone range:
   Exceeds          → upper 75th percentile of zone
   Fully Meets      → mid 50th percentile of zone
   Needs Improvement → lower 25th percentile of zone
-  ± 10% uniform noise added → rounded to nearest $50
+  ± 10% uniform noise added → rounded to nearest ₹50
   np.random.seed(42) for reproducibility
 ```
 
@@ -179,9 +179,9 @@ functions applied together to demonstrate their difference in tie-handling.
 
 | Employee | Title | Pay Zone | Monthly Salary | Rank |
 |---|---|---|---|---|
-| Mollie Jenkins | Accountant I | Zone C | $131,650 | 1 |
-| Jacey Braun | Accountant I | Zone C | $129,900 | 2 |
-| Beatrice Bean | Sr. Accountant | Zone C | $128,050 | 3 |
+| Mollie Jenkins | Accountant I | Zone C | ₹131,650 | 1 |
+| Jacey Braun | Accountant I | Zone C | ₹129,900 | 2 |
+| Beatrice Bean | Sr. Accountant | Zone C | ₹128,050 | 3 |
 
 ---
 
@@ -233,12 +233,12 @@ average salary, and average performance per cohort.
 
 | Tenure Group | Employees | Terminated | Termination Rate | Avg Monthly Salary | Avg Age |
 |---|---|---|---|---|---|
-| < 1 year | 959 | 187 | **19.50%** | $75,611 | 51.6 |
-| 1–2 years | 696 | 98 | 14.08% | $75,978 | 52.3 |
-| 2–3 years | 516 | 57 | 11.05% | $76,903 | 51.3 |
-| 3–4 years | 390 | 30 | 7.69% | $74,901 | 52.0 |
-| 4–5 years | 326 | 15 | 4.60% | $77,945 | 52.5 |
-| 5+ years | 113 | 0 | **0%** | $72,058 | 50.1 |
+| < 1 year | 959 | 187 | **19.50%** | ₹75,611 | 51.6 |
+| 1–2 years | 696 | 98 | 14.08% | ₹75,978 | 52.3 |
+| 2–3 years | 516 | 57 | 11.05% | ₹76,903 | 51.3 |
+| 3–4 years | 390 | 30 | 7.69% | ₹74,901 | 52.0 |
+| 4–5 years | 326 | 15 | 4.60% | ₹77,945 | 52.5 |
+| 5+ years | 113 | 0 | **0%** | ₹72,058 | 50.1 |
 
 **Key insight:** Termination risk drops sharply with each year of tenure. Employees
 who survive past 5 years have 0% termination rate in this dataset — strong indicator
@@ -256,10 +256,10 @@ gender composition of each band.
 
 | Band | Count | Floor | Ceiling | Avg | Male | Female |
 |---|---|---|---|---|---|---|
-| Q1 — Bottom 25% | 425 | $33,950 | $44,100 | $41,645 | 158 | 267 |
-| Q2 — Lower Mid | 425 | $44,150 | $72,300 | $60,588 | 162 | 263 |
-| Q3 — Upper Mid | 424 | $72,300 | $111,650 | $85,139 | 151 | 273 |
-| Q4 — Top 25% | 424 | $111,650 | $132,250 | $118,188 | 168 | 256 |
+| Q1 — Bottom 25% | 425 | ₹33,950 | ₹44,100 | ₹41,645 | 158 | 267 |
+| Q2 — Lower Mid | 425 | ₹44,150 | ₹72,300 | ₹60,588 | 162 | 263 |
+| Q3 — Upper Mid | 424 | ₹72,300 | ₹111,650 | ₹85,139 | 151 | 273 |
+| Q4 — Top 25% | 424 | ₹111,650 | ₹132,250 | ₹118,188 | 168 | 256 |
 
 **Observation:** Female employees are present across all quartiles in Production,
 suggesting no strong gender salary skew in the bottom half — a notable finding for
@@ -287,9 +287,9 @@ Employees whose actual zone lags behind expectation are flagged as stagnant.
 
 | Employee | Department | Title | Actual Zone | Expected Zone | Tenure | Monthly Salary | Risk |
 |---|---|---|---|---|---|---|---|
-| George Sheppard | Admin Offices | Senior BI Developer | Zone A | Zone C | 5.4 yrs | $44,350 | High Risk |
-| Lena Sandoval | Executive Office | Network Engineer | Zone B | Zone C | 5.4 yrs | $69,600 | High Risk |
-| Andreas Torres | IT/IS | CIO | Zone A | Zone C | 5.4 yrs | $42,800 | High Risk |
+| George Sheppard | Admin Offices | Senior BI Developer | Zone A | Zone C | 5.4 yrs | ₹44,350 | High Risk |
+| Lena Sandoval | Executive Office | Network Engineer | Zone B | Zone C | 5.4 yrs | ₹69,600 | High Risk |
+| Andreas Torres | IT/IS | CIO | Zone A | Zone C | 5.4 yrs | ₹42,800 | High Risk |
 
 **Key insight:** Several senior-titled employees (CIO, Senior BI Developer, President & CEO)
 are in Zone A despite 5+ year tenure — a critical pay equity gap that HR would need to
@@ -302,16 +302,16 @@ investigate immediately.
 
 | Department | Total | Active | Terminated | Term Rate | Avg Salary | Avg Tenure | Avg Perf Score |
 |---|---|---|---|---|---|---|---|
-| Production | 2,020 | 1,698 | 322 | **15.94%** | $76,056 | 2.1 yrs | 2.94 |
-| Software Engineering | 115 | 95 | 20 | **17.39%** | $78,120 | 1.8 yrs | 3.00 |
-| IT/IS | 430 | 396 | 34 | 7.91% | $75,720 | 2.1 yrs | 2.90 |
-| Sales | 331 | 321 | 10 | 3.02% | $75,658 | 2.1 yrs | 2.97 |
-| Admin Offices | 80 | 79 | 1 | 1.25% | $73,146 | 1.9 yrs | 3.09 |
-| Executive Office | 24 | 24 | 0 | 0.00% | $73,579 | 1.9 yrs | 2.54 |
+| Production | 2,020 | 1,698 | 322 | **15.94%** | ₹76,056 | 2.1 yrs | 2.94 |
+| Software Engineering | 115 | 95 | 20 | **17.39%** | ₹78,120 | 1.8 yrs | 3.00 |
+| IT/IS | 430 | 396 | 34 | 7.91% | ₹75,720 | 2.1 yrs | 2.90 |
+| Sales | 331 | 321 | 10 | 3.02% | ₹75,658 | 2.1 yrs | 2.97 |
+| Admin Offices | 80 | 79 | 1 | 1.25% | ₹73,146 | 1.9 yrs | 3.09 |
+| Executive Office | 24 | 24 | 0 | 0.00% | ₹73,579 | 1.9 yrs | 2.54 |
 
 **Key insights:**
 - Software Engineering has the highest termination rate (17.39%) despite the
-  highest average salary ($78,120) — compensation alone is not retaining this group
+  highest average salary (₹78,120) — compensation alone is not retaining this group
 - Admin Offices has the best average performance score (3.09) with near-zero attrition
 - Average tenure across all departments is under 2.5 years — the organisation has a
   systemic early-tenure retention problem
@@ -383,7 +383,7 @@ PERCENT_RANK() OVER (ORDER BY salary)        -- returns 0.0 to 1.0
 Employee Performance Dashboard_HR/
 │
 ├── README.md
-│
+│-----.gitignore
 ├── data/
 │   └── employee_data.csv               ← raw Kaggle dataset (3,000 rows, 26 cols)
 │
@@ -404,7 +404,7 @@ Employee Performance Dashboard_HR/
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/SahilGogna/sql-employee-performance-dashboard.git
+git clone https://github.com/P568848382/sql-employee-performance-dashboard.git
 cd sql-employee-performance-dashboard
 
 # 2. Install dependencies
@@ -420,10 +420,10 @@ psql -U postgres -c "CREATE DATABASE employee_performance;"
 python python/load_employee_data.py
 
 # 6. Run validation queries
-#    Open sql/01_data_validation.sql in DBeaver and execute
+#    Open sql/01_data_validation.sql in pgadmin and execute
 
 # 7. Run business queries
-#    Open sql/queries.sql in DBeaver and execute all 8 queries
+#    Open sql/queries.sql in pgadmin and execute all 8 queries
 ```
 
 ---
@@ -432,9 +432,10 @@ python python/load_employee_data.py
 
 | Project | Tools | Link |
 |---|---|---|
-| Ecommerce Sales Analysis (Google Analytics) | BigQuery SQL | [repo link] |
-| Customer Churn Analysis (Telco) | PostgreSQL · Python · Pandas | [repo link] |
-| Employee Performance Dashboard | PostgreSQL · Python · Pandas | ← You are here |
+| Ecommerce Sales Analysis (Google Analytics) | BigQuery SQL | https://github.com/P568848382/sql-ecommerce-google-analytics |
+| Customer Churn Analysis (Telco) | PostgreSQL · Python · Pandas | https://github.com/P568848382/sql-customer-churn-analysis |
+| Employee Performance Dashboard | PostgreSQL · Python · Pandas | https://github.com/P568848382/sql-employee-performance-dashboard |
+| Olist Brazilian E-commerce | PostgreSQL,Python,Tableau · Multi-table JOINs,Machine Learning(limited use) | https://github.com/P568848382/olist-ecommerce-intelligence |
+| Dairy Sales & Finance Analysis |Python 3.11 — Pandas, NumPy,PostgreSQL 15 — Star Schema,Tabular Model — DAX,Tableau Desktop / Tableau Public,All operational funnels, Tableau dashboards | https://github.com/P568848382/msrb_dairy_analytics |
+|Superstore Analysis project |Python, SQL, and Tableau|https://github.com/P568848382/superstore-analytics-project |
 | Fraud Detection (coming soon) | PostgreSQL · CTEs · Window Functions | — |
-| Olist Brazilian E-commerce | PostgreSQL · Multi-table JOINs | [repo link] |
-| Dairy Sales & Finance Analysis | PostgreSQL · Tableau | [repo link] |
