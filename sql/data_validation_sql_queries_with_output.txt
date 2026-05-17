@@ -1,0 +1,145 @@
+--Data Validation
+select * from employee_performance limit 5;
+
+o/p:-
+"empid"	"firstname"	"lastname"	"startdate"	"exitdate"	"title"	"supervisor"	"ademail"	"businessunit"	"employeestatus"	"employeetype"	"payzone"	"employeeclassificationtype"	"terminationtype"	"terminationdescription"	"departmenttype"	"division"	"dob"	"state"	"jobfunctiondescription"	"gendercode"	"locationcode"	"racedesc"	"maritaldesc"	"performance_score"	"current_employee_rating"	"start_date"	"exit_date"	"tenure_months"	"tenure_years"	"age"	"monthly_salary"	"annual_salary"	"is_terminated"	"performance_score_num"
+"3427"	"Uriah"	"Bridges"	"20-Sep-19"		"Production Technician I"	"Peter Oneill"	"uriah.bridges@bilearner.com"	"CCDR"	"Active"	"Contract"	"Zone C"	"Temporary"	"Unk"		"Production       "	"Finance & Accounting"	"1969-07-10"	"MA"	"Accounting"	"Female"	"34904"	"White"	"Widowed"	"Fully Meets"	4	"2019-09-20"		52	4.33	54	113750	1365000	0	3
+"3428"	"Paula"	"Small"	"11-Feb-23"		"Production Technician I"	"Renee Mccormick"	"paula.small@bilearner.com"	"EW"	"Active"	"Contract"	"Zone A"	"Part-Time"	"Unk"		"Production       "	"Aerial"	"1965-08-30"	"MA"	"Labor"	"Male"	"6593"	"Hispanic"	"Widowed"	"Fully Meets"	3	"2023-02-11"		10	0.83	58	44750	537000	0	3
+"3429"	"Edward"	"Buck"	"10-Dec-18"		"Area Sales Manager"	"Crystal Walker"	"edward.buck@bilearner.com"	"PL"	"Active"	"Full-Time"	"Zone B"	"Part-Time"	"Unk"		"Sales"	"General - Sga"	"1991-06-10"	"MA"	"Assistant"	"Male"	"2330"	"Hispanic"	"Widowed"	"Fully Meets"	4	"2018-12-10"		61	5.08	32	74100	889200	0	3
+"3430"	"Michael"	"Riordan"	"21-Jun-21"		"Area Sales Manager"	"Rebekah Wright"	"michael.riordan@bilearner.com"	"CCDR"	"Active"	"Contract"	"Zone A"	"Full-Time"	"Unk"		"Sales"	"Finance & Accounting"	"1998-04-04"	"ND"	"Clerk"	"Male"	"58782"	"Other"	"Single"	"Fully Meets"	2	"2021-06-21"		30	2.50	25	43000	516000	0	3
+"3431"	"Jasmine"	"Onque"	"29-Jun-19"		"Area Sales Manager"	"Jason Kim"	"jasmine.onque@bilearner.com"	"TNS"	"Active"	"Contract"	"Zone A"	"Temporary"	"Unk"		"Sales"	"General - Con"	"1969-08-29"	"FL"	"Laborer"	"Female"	"33174"	"Other"	"Married"	"Fully Meets"	3	"2019-06-29"		54	4.50	54	40800	489600	0	3
+
+select employeestatus ,count(*) as headcount
+from employee_performance
+group by employeestatus;
+--o/p:-
+/*
+"employeestatus"			"headcount"
+"Voluntarily Terminated"	321
+"Future Start"				69
+"Active"					2458
+"Terminated for Cause"		66
+"Leave of Absence"			86 
+*/
+
+
+select column_name,data_type
+from information_schema.columns
+where table_name='employee_performance';
+/*
+column_name							data_type
+"performance_score_num"				"smallint"
+"dob"								"date"
+"current_employee_rating"			"smallint"
+"start_date"						"date"
+"exit_date"							"date"
+"tenure_months"						"integer"
+"tenure_years"						"numeric"
+"age"								"smallint"
+"monthly_salary"					"integer"
+"annual_salary"						"integer"
+"is_terminated"						"smallint"
+"payzone"							"character varying"
+"employeeclassificationtype"		"character varying"
+"terminationtype"					"character varying"
+"terminationdescription"	"character varying"
+"departmenttype"	"character varying"
+"division"	"character varying"
+"empid"	"character varying"
+"state"	"character varying"
+"jobfunctiondescription"	"character varying"
+"gendercode"	"character varying"
+"locationcode"	"character varying"
+"racedesc"	"character varying"
+"maritaldesc"	"character varying"
+"performance_score"	"character varying"
+"firstname"	"character varying"
+"lastname"	"character varying"
+"startdate"	"character varying"
+"exitdate"	"character varying"
+"title"	"character varying"
+"supervisor"	"character varying"
+"ademail"	"character varying"
+"businessunit"	"character varying"
+"employeestatus"	"character varying"
+"employeetype"	"character varying"
+*/
+
+--Shape Check
+
+select count(*) as total_employees from employee_performance;
+
+o/p:-3000
+
+--Status Distribution
+
+select employeestatus,count(*) 
+from employee_performance
+group by employeestatus;
+o/p:-
+"employeestatus"	"count"
+"Voluntarily Terminated"	321
+"Future Start"	69
+"Active"	2458
+"Terminated for Cause"	66
+"Leave of Absence"	86
+
+---- Pay zone + salary sanity check
+
+select payzone,
+	   count(*) as headcount,
+	   round(min(monthly_salary),0) as min_salary,
+	   round(max(monthly_salary),0)  as max_salary,
+	   round(avg(monthly_salary),0) as avg_salary
+from employee_performance
+group by payzone
+order by payzone;
+o/p:-
+"payzone"	"headcount"	"min_salary"	"max_salary"	"avg_salary"
+"Zone A"	1062	33850	51250	42954
+"Zone B"	985	60400	84700	73014
+"Zone C"	953	97850	132250	115741
+
+-- Performance score distribution
+
+select performance_score,
+	  count(*) as headcount
+from employee_performance
+group by performance_score
+order by headcount desc;
+o/p:-
+"performance_score"	"headcount"
+"Fully Meets"	2361
+"Exceeds"	369
+"Needs Improvement"	177
+"PIP"	93
+
+---- Termination type breakdown
+
+select terminationtype,
+       count(*) as headcount
+from employee_performance
+group by terminationtype;
+o/p:-
+"terminationtype"	"headcount"
+"Unk"	1467
+"Retirement"	377
+"Involuntary"	388
+"Voluntary"	388
+"Resignation"	380
+
+---- Department types
+
+select departmenttype,
+		count(*)
+from employee_performance
+group by departmenttype
+order by count(*) desc;
+o/p:-
+"departmenttype"	"count"
+"Production       "	2020
+"IT/IS"	430
+"Sales"	331
+"Software Engineering"	115
+"Admin Offices"	80
+"Executive Office"	24

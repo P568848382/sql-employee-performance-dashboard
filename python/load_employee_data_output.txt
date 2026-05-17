@@ -1,0 +1,78 @@
+output of pyhton code:-
+Columns: ['EmpID', 'FirstName', 'LastName', 'StartDate', 'ExitDate', 'Title', 'Supervisor', 'ADEmail', 'BusinessUnit',
+'EmployeeStatus', 'EmployeeType', 'PayZone', 'EmployeeClassificationType', 'TerminationType', 'TerminationDescription',
+ 'DepartmentType', 'Division', 'DOB', 'State', 'JobFunctionDescription', 'GenderCode', 'LocationCode', 'RaceDesc', 'Mar
+italDesc', 'Performance Score', 'Current Employee Rating']
+
+ Renamed Columns: ['empid', 'firstname', 'lastname', 'startdate', 'exitdate', 'title', 'supervisor', 'ademail', 'busine
+ssunit', 'employeestatus', 'employeetype', 'payzone', 'employeeclassificationtype', 'terminationtype', 'terminationdesc
+ription', 'departmenttype', 'division', 'dob', 'state', 'jobfunctiondescription', 'gendercode', 'locationcode', 'racede
+sc', 'maritaldesc', 'performance_score', 'current_employee_rating']
+
+ Salary By Pay Zone
+           min     max      mean
+payzone
+Zone A   33850   51250   42954.0
+Zone B   60400   84700   73014.0
+Zone C   97850  132250  115741.0
+
+ Tenure Stats:
+count    3000.0
+mean       25.0
+std        18.3
+min         0.0
+25%         9.0
+50%        21.0
+75%        39.0
+max        65.0
+Name: tenure_months, dtype: float64
+
+ Age Stats:
+count    3000.0
+mean       51.8
+std        17.6
+min        22.0
+25%        36.0
+50%        52.0
+75%        67.0
+max        80.0
+Name: age, dtype: float64
+
+ Termination Count
+is_terminated
+0    3000
+Name: count, dtype: int64
+
+ Performance Distribution
+performance_score
+Fully Meets          2361
+Exceeds               369
+Needs Improvement     177
+PIP                    93
+Name: count, dtype: int64
+Final Columns:
+['empid', 'firstname', 'lastname', 'startdate', 'exitdate', 'title', 'supervisor', 'ademail', 'businessunit', 'employee
+status', 'employeetype', 'payzone', 'employeeclassificationtype', 'terminationtype', 'terminationdescription', 'departm
+enttype', 'division', 'dob', 'state', 'jobfunctiondescription', 'gendercode', 'locationcode', 'racedesc', 'maritaldesc'
+, 'performance_score', 'current_employee_rating', 'start_date', 'exit_date', 'tenure_months', 'tenure_years', 'age', 'm
+onthly_salary', 'annual_salary', 'is_terminated', 'performance_score_num']
+   empid firstname  lastname  startdate  ... monthly_salary annual_salary is_terminated performance_score_num
+0   3427     Uriah   Bridges  20-Sep-19  ...         113750       1365000             0                     3
+1   3428     Paula     Small  11-Feb-23  ...          44750        537000             0                     3
+2   3429    Edward      Buck  10-Dec-18  ...          74100        889200             0                     3
+3   3430   Michael   Riordan  21-Jun-21  ...          43000        516000             0                     3
+4   3431   Jasmine     Onque  29-Jun-19  ...          40800        489600             0                     3
+5   3432     Maruk    Fraval  17-Jan-20  ...          70100        841200             0                     3
+6   3433     Latia     Costa  06-Apr-22  ...          78150        937800             0                     4
+7   3434  Sharlene     Terry  06-Nov-20  ...         118650       1423800             0                     3
+8   3435       Jac  McKinzie  18-Aug-18  ...          81950        983400             0                     4
+9   3436    Joseph   Martins  21-Jan-22  ...          73950        887400             0                     3
+
+[10 rows x 35 columns]
+
+--- Loading data into PostgreSQL ---
+
+[OK] Table 'employee_performance' created successfully in 'employee_performance'.
+     Rows in DB  : 3,000
+    Rows in df  : 3,000
+    Columns     : 35
